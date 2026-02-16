@@ -94,11 +94,22 @@ function formatCard(card: TestCard): string {
   if (card.detail) {
     formatted += `**Detall**: ${card.detail}\n`;
   }
-  
+
+  if (card.dev_reply) {
+    formatted += `**Resposta dev**: ${card.dev_reply}\n`;
+  }
+
+  if (card.images && card.images.length > 0) {
+    formatted += `**Imatges**:\n`;
+    card.images.forEach((url, i) => {
+      formatted += `  - Captura ${i + 1}: ${url}\n`;
+    });
+  }
+
   if (card.tester) {
     formatted += `**Tester**: ${card.tester}\n`;
   }
-  
+
   formatted += '\n---\n\n';
   
   return formatted;

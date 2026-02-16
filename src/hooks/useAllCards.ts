@@ -128,6 +128,15 @@ export function useAllCards(issueKeys: string[]) {
         await loadAllCards(true)
     }
 
+    async function deleteImage(url: string) {
+        // Extract path from public URL: ...card-images/uploads/filename.png
+        const match = url.match(/card-images\/(.+)$/)
+        if (!match) return
+        const path = match[1]
+        const { error } = await supabase.storage.from('card-images').remove([path])
+        if (error) console.error('Error deleting image:', error)
+    }
+
     return {
         cardsByIssue,
         loading,
@@ -135,6 +144,7 @@ export function useAllCards(issueKeys: string[]) {
         createCard,
         updateCard,
         deleteCard,
+        deleteImage,
         setModalOpen,
         refresh: () => loadAllCards(false)
     }

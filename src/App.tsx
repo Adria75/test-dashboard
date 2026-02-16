@@ -11,7 +11,7 @@ function App() {
   const issueKeys = issues.map(i => i.key);
 
   // Hook net, sense paràmetres extra
-  const { cardsByIssue, loading, createCard, updateCard, deleteCard, setModalOpen } = useAllCards(issueKeys);
+  const { cardsByIssue, loading, createCard, updateCard, deleteCard, deleteImage, setModalOpen } = useAllCards(issueKeys);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTester, setFilterTester] = useState('all');
@@ -181,6 +181,7 @@ function App() {
                     currentUser={currentUser}
                     onExport={handleExport}
                     onModalOpenChange={setModalOpen}
+                    onDeleteImage={deleteImage}
                 />
             ))
         )}

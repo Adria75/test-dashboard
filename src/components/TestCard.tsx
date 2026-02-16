@@ -68,6 +68,20 @@ export function TestCard({ card, onDragStart, onDragEnd, onEdit, onDelete }: Tes
               {card.detail}
             </div>
         )}
+        {card.dev_reply && (
+            <div className="card-dev-reply">
+              <strong>Dev:</strong> {card.dev_reply}
+            </div>
+        )}
+        {card.images && card.images.length > 0 && (
+            <div className="card-images">
+              {card.images.map((url, i) => (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                    <img className="card-image-thumb" src={url} alt={`Captura ${i + 1}`} />
+                  </a>
+              ))}
+            </div>
+        )}
         <div className="card-footer">
           <div className="card-tester">
             {card.tester ? `👤 ${card.tester}` : '⚪ Sense assignar'}

@@ -27,6 +27,7 @@ interface JiraIssueProps {
   currentUser: string;
   onExport?: (issueKey: string) => void;
   onModalOpenChange?: (open: boolean) => void;
+  onDeleteImage?: (url: string) => Promise<void>;
 }
 
 export function JiraIssue({
@@ -38,7 +39,8 @@ export function JiraIssue({
                             filterTester,
                             currentUser,
                             onExport,
-                            onModalOpenChange
+                            onModalOpenChange,
+                            onDeleteImage
                           }: JiraIssueProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCard, setEditingCard] = useState<TestCard | null>(null);
@@ -151,6 +153,7 @@ export function JiraIssue({
             onClose={handleCloseModal}
             onCreateCard={onCreateCard}
             onUpdateCard={handleUpdateCardData}
+            onDeleteImage={onDeleteImage}
             issueKey={issue.key}
             currentUser={currentUser}
             editCard={editingCard}

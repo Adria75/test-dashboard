@@ -591,3 +591,133 @@ body.dark-mode .empty-state {
 body.dark-mode .empty-state-title {
   color: #e4e4e4;
 }
+
+/* Dev reply block on cards */
+.card-dev-reply {
+  background: #e3fcef;
+  border-left: 3px solid #006644;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  color: #006644;
+  line-height: 1.4;
+}
+
+body.dark-mode .card-dev-reply {
+  background: rgba(0, 102, 68, 0.15);
+  color: #57d9a3;
+  border-left-color: #57d9a3;
+}
+
+/* Image thumbnails on cards */
+.card-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.card-image-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.card-image-thumb:hover {
+  opacity: 0.8;
+}
+
+body.dark-mode .card-image-thumb {
+  border-color: #555;
+}
+
+/* Modal image paste area */
+.image-paste-area {
+  border: 2px dashed #dfe1e6;
+  border-radius: 4px;
+  padding: 12px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.dark-mode .image-paste-area {
+  border-color: #555;
+}
+
+.image-paste-hint {
+  color: #5e6c84;
+  font-size: 13px;
+}
+
+body.dark-mode .image-paste-hint {
+  color: #a0a0a0;
+}
+
+.image-uploading {
+  color: #0052cc;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+body.dark-mode .image-uploading {
+  color: #4c9aff;
+}
+
+.image-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.image-thumbnail {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.image-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #dfe1e6;
+}
+
+body.dark-mode .image-thumbnail img {
+  border-color: #555;
+}
+
+.image-remove-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #bf2600;
+  color: white;
+  border: 2px solid white;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.image-remove-btn:hover {
+  background: #de350b;
+}
+
+body.dark-mode .image-remove-btn {
+  border-color: #2d2d2d;
+}

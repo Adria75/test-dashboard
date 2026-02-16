@@ -8,6 +8,8 @@ export interface TestCard {
   type: CardType
   summary: string
   detail: string | null
+  dev_reply: string | null
+  images: string[]
   status: CardStatus
   tester: string | null
   created_at: string

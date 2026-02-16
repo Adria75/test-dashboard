@@ -17,6 +17,8 @@ export interface Database {
           type: 'error' | 'dubte' | 'proposta' | 'ux'
           summary: string
           detail: string | null
+          dev_reply: string | null
+          images: string[]
           status: 'pendent' | 'errors' | 'tancat' | 'descartat'
           tester: string | null
           created_at: string
@@ -29,6 +31,8 @@ export interface Database {
           type: 'error' | 'dubte' | 'proposta' | 'ux'
           summary: string
           detail?: string | null
+          dev_reply?: string | null
+          images?: string[]
           status: 'pendent' | 'errors' | 'tancat' | 'descartat'
           tester?: string | null
           created_at?: string
@@ -41,6 +45,8 @@ export interface Database {
           type?: 'error' | 'dubte' | 'proposta' | 'ux'
           summary?: string
           detail?: string | null
+          dev_reply?: string | null
+          images?: string[]
           status?: 'pendent' | 'errors' | 'tancat' | 'descartat'
           tester?: string | null
           created_at?: string

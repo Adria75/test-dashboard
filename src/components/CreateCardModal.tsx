@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { CardType, CardStatus, TestCard } from '../types';
+import { uploadImage } from '../lib/uploadImage';
 
 interface CreateCardModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface CreateCardModalProps {
     summary: string;
     detail: string;
     status: CardStatus;
+    dev_reply?: string | null;
+    images?: string[];
   }) => void;
   onUpdateCard?: (cardId: number, cardData: {
     ref: string;
@@ -17,7 +20,10 @@ interface CreateCardModalProps {
     summary: string;
     detail: string;
     status: CardStatus;
+    dev_reply?: string | null;
+    images?: string[];
   }) => void;
+  onDeleteImage?: (url: string) => Promise<void>;
   issueKey: string;
   currentUser: string;
   editCard?: TestCard | null;
@@ -28,6 +34,7 @@ export function CreateCardModal({
                                   onClose,
                                   onCreateCard,
                                   onUpdateCard,
+                                  onDeleteImage,
                                   issueKey,
                                   currentUser,
                                   editCard = null
@@ -38,15 +45,20 @@ export function CreateCardModal({
     summary: string;
     detail: string;
     status: CardStatus;
+    dev_reply: string;
+    images: string[];
   }>({
     ref: '',
     type: 'error',
     summary: '',
     detail: '',
-    status: 'errors'
+    status: 'errors',
+    dev_reply: '',
+    images: []
   });
 
-  // Quan s'obre per editar, carregar les dades de la card
+  const [uploading, setUploading] = useState(false);
+
   useEffect(() => {
     if (editCard) {
       setFormData({
@@ -54,7 +66,9 @@ export function CreateCardModal({
         type: editCard.type,
         summary: editCard.summary,
         detail: editCard.detail || '',
-        status: editCard.status
+        status: editCard.status,
+        dev_reply: editCard.dev_reply || '',
+        images: editCard.images || []
       });
     } else {
       setFormData({
@@ -62,33 +76,82 @@ export function CreateCardModal({
         type: 'error',
         summary: '',
         detail: '',
-        status: 'errors'
+        status: 'errors',
+        dev_reply: '',
+        images: []
       });
     }
   }, [editCard, isOpen]);
 
   if (!isOpen) return null;
 
+  const handlePaste = async (e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    const imageFiles: File[] = [];
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        const file = items[i].getAsFile();
+        if (file) imageFiles.push(file);
+      }
+    }
+
+    if (imageFiles.length === 0) return;
+
+    e.preventDefault();
+    setUploading(true);
+
+    try {
+      const urls: string[] = [];
+      for (const file of imageFiles) {
+        const url = await uploadImage(file);
+        urls.push(url);
+      }
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...urls] }));
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      alert('Error pujant la imatge: ' + (err as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = async (url: string) => {
+    if (onDeleteImage) {
+      await onDeleteImage(url);
+    }
+    setFormData(prev => ({ ...prev, images: prev.images.filter(u => u !== url) }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const submitData = {
+      ref: formData.ref,
+      type: formData.type,
+      summary: formData.summary,
+      detail: formData.detail,
+      status: formData.status,
+      dev_reply: formData.dev_reply || null,
+      images: formData.images
+    };
+
     if (editCard && onUpdateCard) {
-      // Mode edició
-      onUpdateCard(editCard.id, formData);
+      onUpdateCard(editCard.id, submitData);
     } else {
-      // Mode creació
-      onCreateCard(formData);
+      onCreateCard(submitData);
     }
 
-    setFormData({ ref: '', type: 'error', summary: '', detail: '', status: 'errors' });
+    setFormData({ ref: '', type: 'error', summary: '', detail: '', status: 'errors', dev_reply: '', images: [] });
     onClose();
   };
 
   const isEditMode = !!editCard;
+  const showDevReply = isEditMode && formData.status === 'errors';
 
   return (
       <div className="modal-overlay" onClick={onClose}>
-        <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal" onClick={(e) => e.stopPropagation()} onPaste={handlePaste}>
           <div className="modal-header">
             {isEditMode ? 'Editar incidència de test' : 'Crear nova incidència de test'}
           </div>
@@ -145,11 +208,49 @@ export function CreateCardModal({
                 <option value="descartat">Descartat</option>
               </select>
             </div>
+
+            {showDevReply && (
+                <div className="form-group">
+                  <label>Resposta del desenvolupador</label>
+                  <textarea
+                      placeholder="Resposta o comentari del desenvolupador..."
+                      value={formData.dev_reply}
+                      onChange={(e) => setFormData({ ...formData, dev_reply: e.target.value })}
+                  />
+                </div>
+            )}
+
+            <div className="form-group">
+              <label>Imatges (Ctrl+V per enganxar captures)</label>
+              <div className="image-paste-area">
+                {uploading && <div className="image-uploading">Pujant imatge...</div>}
+                {formData.images.length > 0 ? (
+                    <div className="image-thumbnails">
+                      {formData.images.map((url, i) => (
+                          <div key={i} className="image-thumbnail">
+                            <img src={url} alt={`Captura ${i + 1}`} />
+                            <button
+                                type="button"
+                                className="image-remove-btn"
+                                onClick={() => handleRemoveImage(url)}
+                                title="Eliminar imatge"
+                            >
+                              &times;
+                            </button>
+                          </div>
+                      ))}
+                    </div>
+                ) : (
+                    !uploading && <div className="image-paste-hint">Ctrl+V per enganxar una captura de pantalla</div>
+                )}
+              </div>
+            </div>
+
             <div className="modal-actions">
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 Cancel·lar
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" className="btn btn-primary" disabled={uploading}>
                 {isEditMode ? 'Guardar canvis' : 'Crear card'}
               </button>
             </div>
