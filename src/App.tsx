@@ -3,13 +3,15 @@ import { JiraIssue } from './components/JiraIssue';
 import { useAllCards } from './hooks/useAllCards';
 import { useJiraIssues } from './hooks/useJiraIssues';
 import { exportToJira } from './lib/jiraExport';
-import type { JiraIssue as JiraIssueType, CardType, CardStatus, TestCard } from './types';
+import type { CardType, CardStatus, TestCard } from './types';
 import './App.css';
 
 function App() {
   const { issues, loading: loadingIssues, error: errorIssues } = useJiraIssues();
   const issueKeys = issues.map(i => i.key);
-  const { cardsByIssue, createCard, updateCard, deleteCard } = useAllCards(issueKeys);
+
+  // Hook net, sense paràmetres extra
+  const { cardsByIssue, loading, createCard, updateCard, deleteCard, setModalOpen } = useAllCards(issueKeys);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTester, setFilterTester] = useState('all');
@@ -18,7 +20,6 @@ function App() {
   const [exporting, setExporting] = useState<string | null>(null);
 
   useEffect(() => {
-    // Aplicar/eliminar classe dark-mode al body
     if (darkMode) {
       document.body.classList.add('dark-mode');
     } else {
@@ -27,7 +28,6 @@ function App() {
   }, [darkMode]);
 
   useEffect(() => {
-    // Obtenir usuari actual del localStorage o demanar-lo
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
       setCurrentUser(savedUser);
@@ -41,9 +41,7 @@ function App() {
   }, []);
 
   const handleExport = async (issueKey: string) => {
-    if (!confirm(`Exportar resultats de ${issueKey} a Jira?`)) {
-      return;
-    }
+    if (!confirm(`Exportar resultats de ${issueKey} a Jira?`)) return;
 
     try {
       setExporting(issueKey);
@@ -75,7 +73,6 @@ function App() {
     images?: string[];
   }) => {
     try {
-      console.log('Creant card amb dades:', cardData);
       await createCard({
         jira_issue_key: issueKey,
         ref: cardData.ref,
@@ -86,7 +83,6 @@ function App() {
         tester: currentUser,
         images: cardData.images || []
       });
-      console.log('Card creada amb èxit');
     } catch (error) {
       console.error('Error creant card:', error);
       alert('Error creant la card: ' + (error as Error).message);
@@ -94,18 +90,15 @@ function App() {
   };
 
   const handleDeleteCard = async (cardId: number) => {
+    if (!confirm('Estàs segur de voler eliminar aquesta card?')) return;
     try {
       await deleteCard(cardId);
-      console.log('Card eliminada amb èxit');
     } catch (error) {
-      console.error('Error eliminant card:', error);
       alert('Error eliminant la card: ' + (error as Error).message);
     }
   };
 
-  if (!currentUser) {
-    return <div>Carregant...</div>;
-  }
+  if (!currentUser) return <div>Carregant...</div>;
 
   if (loadingIssues) {
     return (
@@ -125,8 +118,6 @@ function App() {
             <h1>🧪 Dashboard de Testing</h1>
             <p style={{ color: '#bf2600' }}>
               ❌ Error connectant amb Jira: {errorIssues}
-              <br />
-              <small>Assegura't que el proxy de Jira està corrent (npm start a jira-proxy/)</small>
             </p>
           </div>
         </div>
@@ -134,14 +125,11 @@ function App() {
   }
 
   const filteredIssues = issues.filter(issue => {
-    const matchesSearch =
-        issue.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return issue.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
         issue.summary.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
   });
 
-  // Obtenir testers únics
-  const testers = ['Adrià', 'Yasiel', 'Eric', 'Marc', 'Anna'];
+  const testers = ['Adrià', 'Yasiel', 'Eric', 'Sergi', 'Ginard'];
 
   return (
       <div className="container">
@@ -154,11 +142,12 @@ function App() {
 
         <div className="header">
           <h1>🧪 Dashboard de Testing</h1>
-          <p>Gestió de tests per issues en estat "En test" · Usuari: <strong>{currentUser}</strong></p>
+          <p>Gestió de tests · Usuari: <strong>{currentUser}</strong></p>
+
           <div className="filters">
             <input
                 type="text"
-                placeholder="🔍 Cercar per clau o títol..."
+                placeholder="🔍 Cercar..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ flex: 1 }}
@@ -178,7 +167,6 @@ function App() {
         {filteredIssues.length === 0 ? (
             <div className="no-issues">
               <h3>No hi ha issues en test</h3>
-              <p>Les issues apareixeran aquí quan estiguin en estat "En test"</p>
             </div>
         ) : (
             filteredIssues.map(issue => (
@@ -192,6 +180,7 @@ function App() {
                     filterTester={filterTester}
                     currentUser={currentUser}
                     onExport={handleExport}
+                    onModalOpenChange={setModalOpen}
                 />
             ))
         )}

@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { KanbanColumn } from './KanbanColumn';
 import { CreateCardModal } from './CreateCardModal';
-import type { JiraIssue as JiraIssueType, TestCard, Column, CardStatus, CardType } from '../types';
+import type { JiraIssue as JiraIssueType, TestCard, CardStatus, CardType } from '../types';
+
+const COLUMNS: { id: CardStatus; label: string; className: string }[] = [
+  { id: 'pendent', label: '⏳ Pendent de validar', className: 'column-pendent' },
+  { id: 'errors', label: '🔴 Errors', className: 'column-errors' },
+  { id: 'tancat', label: '✅ Tancat', className: 'column-tancat' },
+  { id: 'descartat', label: '❌ Descartat', className: 'column-descartat' }
+];
 
 interface JiraIssueProps {
   issue: JiraIssueType;
@@ -13,19 +20,14 @@ interface JiraIssueProps {
     summary: string;
     detail: string;
     status: CardStatus;
+    images?: string[];
   }) => void;
   onDeleteCard: (cardId: number) => void;
   filterTester: string;
   currentUser: string;
   onExport?: (issueKey: string) => void;
+  onModalOpenChange?: (open: boolean) => void;
 }
-
-const COLUMNS: Column[] = [
-  { id: 'pendent', label: '⏳ Pendent de validar', className: 'column-pendent' },
-  { id: 'errors', label: '🔴 Errors', className: 'column-errors' },
-  { id: 'tancat', label: '✅ Tancat', className: 'column-tancat' },
-  { id: 'descartat', label: '❌ Descartat', className: 'column-descartat' }
-];
 
 export function JiraIssue({
                             issue,
@@ -34,40 +36,40 @@ export function JiraIssue({
                             onCreateCard,
                             onDeleteCard,
                             filterTester,
-                            currentUser
+                            currentUser,
+                            onExport,
+                            onModalOpenChange
                           }: JiraIssueProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCard, setEditingCard] = useState<TestCard | null>(null);
 
+  const handleOpenCreateModal = () => {
+    setShowCreateModal(true);
+    onModalOpenChange?.(true);
+  };
+
   const handleEdit = (card: TestCard) => {
     setEditingCard(card);
     setShowCreateModal(true);
+    onModalOpenChange?.(true);
   };
 
   const handleCloseModal = () => {
     setShowCreateModal(false);
     setEditingCard(null);
+    onModalOpenChange?.(false);
   };
 
-  const handleUpdateCardData = (cardId: number, cardData: {
-    ref: string;
-    type: CardType;
-    summary: string;
-    detail: string;
-    status: CardStatus;
-  }) => {
+  const handleUpdateCardData = (cardId: number, cardData: Partial<TestCard>) => {
     onUpdateCard(cardId, cardData);
     handleCloseModal();
   };
 
   const getCardsByStatus = (status: CardStatus) => {
     let filteredCards = cards.filter(card => card.status === status);
-
-    // Aplicar filtre per tester si està actiu
     if (filterTester !== 'all') {
       filteredCards = filteredCards.filter(card => card.tester === filterTester);
     }
-
     return filteredCards;
   };
 
@@ -81,28 +83,42 @@ export function JiraIssue({
   const hasCards = cards.length > 0;
 
   const handleDrop = (e: React.DragEvent, targetStatus: string) => {
-    const cardId = parseInt(e.dataTransfer.getData('cardId'));
+    const cardIdString = e.dataTransfer.getData('cardId');
+    if (!cardIdString) return;
+    const cardId = parseInt(cardIdString, 10);
     onUpdateCard(cardId, { status: targetStatus as CardStatus });
   };
 
   return (
       <div className="jira-issue">
         <div className="issue-header">
-          <div>
+          <div style={{ flex: 1 }}>
             <span className="issue-key">{issue.key}</span>
             <h2 style={{ marginTop: '5px' }}>{issue.summary}</h2>
           </div>
-          <div className="issue-stats">
-            <span>✅ {stats.tancat}/{stats.total}</span>
-            <span>🔴 {stats.errors} errors</span>
-            <span>📋 {stats.pendent} pendents</span>
+
+          <div className="issue-header-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '10px' }}>
+            <div className="issue-stats">
+              <span>✅ {stats.tancat}/{stats.total}</span>
+              <span>🔴 {stats.errors} errors</span>
+              <span>📋 {stats.pendent} pendents</span>
+            </div>
+            {onExport && (
+                <button
+                    className="btn-export"
+                    onClick={() => onExport(issue.key)}
+                    style={{ fontSize: '0.8rem', padding: '4px 8px', backgroundColor: '#0052cc', color: 'white', border: 'none', borderRadius: '3px', cursor: 'pointer' }}
+                >
+                  📤 Exportar a Jira
+                </button>
+            )}
           </div>
         </div>
 
         <div className="issue-actions">
           <button
               className="btn-create-card"
-              onClick={() => setShowCreateModal(true)}
+              onClick={handleOpenCreateModal}
           >
             <span className="btn-create-card-icon">+</span>
             Afegir incidència
