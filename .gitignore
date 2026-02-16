@@ -1,2 +1,31 @@
-./node_modules
-./jira-proxy/node_modules
+# Dependencies
+node_modules/
+jira-proxy/node_modules/
+
+# Build
+dist/
+build/
+
+# Env files
+.env
+.env.local
+.env*.local
+jira-proxy/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output
+coverage/
+.turbo/

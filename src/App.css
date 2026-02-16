@@ -1,0 +1,593 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+  background: #f4f5f7;
+  padding: 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Mode fosc */
+body.dark-mode {
+  background: #1a1a1a;
+  color: #e4e4e4;
+}
+
+body.dark-mode .header {
+  background: #2d2d2d;
+  color: #e4e4e4;
+}
+
+body.dark-mode .header h1 {
+  color: #ffffff;
+}
+
+body.dark-mode .header p {
+  color: #b0b0b0;
+}
+
+body.dark-mode .jira-issue {
+  background: #2d2d2d;
+}
+
+body.dark-mode .issue-header {
+  background: #0747a6;
+}
+
+body.dark-mode .issue-actions {
+  background: #252525;
+  border-bottom-color: #3a3a3a;
+}
+
+body.dark-mode .kanban-column {
+  background: #1a1a1a;
+}
+
+body.dark-mode .test-card {
+  background: #2d2d2d;
+  color: #e4e4e4;
+}
+
+body.dark-mode .test-card:hover {
+  background: #3a3a3a;
+}
+
+body.dark-mode .card-summary,
+body.dark-mode .column-header {
+  color: #e4e4e4;
+}
+
+body.dark-mode .card-ref,
+body.dark-mode .card-tester,
+body.dark-mode .card-date,
+body.dark-mode .card-detail,
+body.dark-mode .empty-column {
+  color: #a0a0a0;
+}
+
+body.dark-mode .filters input,
+body.dark-mode .filters select {
+  background: #3a3a3a;
+  color: #e4e4e4;
+  border-color: #555;
+}
+
+body.dark-mode .column-count {
+  background: #3a3a3a;
+  color: #e4e4e4;
+}
+
+body.dark-mode .card-footer {
+  border-top-color: #3a3a3a;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  color: #172b4d;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  color: #5e6c84;
+  margin-bottom: 15px;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.filters input,
+.filters select {
+  padding: 8px 12px;
+  border: 2px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.jira-issue {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.issue-header {
+  background: #0052cc;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.issue-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.issue-key {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.issue-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 13px;
+}
+
+.issue-actions {
+  padding: 15px 20px;
+  border-bottom: 1px solid #f4f5f7;
+  background: #fafbfc;
+}
+
+.btn-create-card {
+  background: transparent;
+  color: #0052cc;
+  padding: 0;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+  margin-bottom: 12px;
+}
+
+.btn-create-card:hover {
+  color: #0747a6;
+  text-decoration: underline;
+}
+
+body.dark-mode .btn-create-card {
+  color: #4c9aff;
+}
+
+body.dark-mode .btn-create-card:hover {
+  color: #2684ff;
+}
+
+.btn-create-card-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: #0052cc;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+body.dark-mode .btn-create-card-icon {
+  background: #4c9aff;
+}
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 20px;
+}
+
+.kanban-column {
+  background: #f4f5f7;
+  border-radius: 6px;
+  padding: 10px;
+  min-height: 200px;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #172b4d;
+}
+
+.column-count {
+  background: #dfe1e6;
+  color: #42526e;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.test-card {
+  background: white;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.test-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.test-card:active {
+  cursor: grabbing;
+}
+
+.card-ref {
+  font-size: 11px;
+  color: #5e6c84;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.test-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.card-action-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .card-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.card-action-delete:hover {
+  background: #ffebe6 !important;
+}
+
+body.dark-mode .card-action-delete:hover {
+  background: rgba(191, 38, 0, 0.2) !important;
+}
+
+.card-type {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card-type.error {
+  background: #ffebe6;
+  color: #bf2600;
+}
+
+.card-type.dubte {
+  background: #eae6ff;
+  color: #5243aa;
+}
+
+.card-type.proposta {
+  background: #deebff;
+  color: #0747a6;
+}
+
+.card-type.ux {
+  background: #fff0b3;
+  color: #ff8b00;
+}
+
+.card-summary {
+  font-size: 13px;
+  color: #172b4d;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.card-detail {
+  font-size: 12px;
+  color: #5e6c84;
+  margin-bottom: 8px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f4f5f7;
+}
+
+.card-tester {
+  font-size: 11px;
+  color: #5e6c84;
+}
+
+.card-date {
+  font-size: 11px;
+  color: #5e6c84;
+}
+
+.empty-column {
+  text-align: center;
+  padding: 30px 10px;
+  color: #5e6c84;
+  font-size: 13px;
+}
+
+/* Estados de las columnas */
+.column-pendent .column-header {
+  color: #5e6c84;
+}
+
+.column-errors .column-header {
+  color: #bf2600;
+}
+
+.column-tancat .column-header {
+  color: #006644;
+}
+
+.column-descartat .column-header {
+  color: #42526e;
+}
+
+.no-issues {
+  text-align: center;
+  padding: 60px 20px;
+  color: #5e6c84;
+}
+
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+}
+
+.drag-over {
+  background: #deebff;
+  border: 2px dashed #0052cc;
+}
+
+.dark-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #0052cc;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s;
+  z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+  background: #0747a6;
+}
+
+body.dark-mode .dark-mode-toggle {
+  background: #ffa500;
+  color: #1a1a1a;
+}
+
+body.dark-mode .dark-mode-toggle:hover {
+  background: #ff8c00;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .modal {
+  background: #2d2d2d;
+  color: #e4e4e4;
+}
+
+.modal-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #172b4d;
+}
+
+body.dark-mode .modal-header {
+  color: #ffffff;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #5e6c84;
+}
+
+body.dark-mode .form-group label {
+  color: #b0b0b0;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+body.dark-mode .form-group input,
+body.dark-mode .form-group select,
+body.dark-mode .form-group textarea {
+  background: #3a3a3a;
+  color: #e4e4e4;
+  border-color: #555;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background: #0052cc;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0747a6;
+}
+
+.btn-secondary {
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+.btn-secondary:hover {
+  background: #dfe1e6;
+}
+
+body.dark-mode .btn-secondary {
+  background: #3a3a3a;
+  color: #e4e4e4;
+}
+
+body.dark-mode .btn-secondary:hover {
+  background: #4a4a4a;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #5e6c84;
+}
+
+body.dark-mode .empty-state {
+  color: #a0a0a0;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #172b4d;
+}
+
+body.dark-mode .empty-state-title {
+  color: #e4e4e4;
+}
